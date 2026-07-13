@@ -12,12 +12,10 @@ on:
           - test
           - daily
   schedule:
-    - cron: '55 8 * * *'
-      timezone: 'Asia/Shanghai'
-    - cron: '10 9 * * *'
-      timezone: 'Asia/Shanghai'
-    - cron: '30 9 * * *'
-      timezone: 'Asia/Shanghai'
+    # GitHub cron 使用 UTC：00:55 / 01:10 / 01:30 对应北京时间 08:55 / 09:10 / 09:30。
+    - cron: '55 0 * * *'
+    - cron: '10 1 * * *'
+    - cron: '30 1 * * *'
 
 permissions:
   contents: write
@@ -47,7 +45,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: 等待北京时间09:00
-        if: github.event_name == 'schedule' && github.event.schedule == '55 8 * * *'
+        if: github.event_name == 'schedule' && github.event.schedule == '55 0 * * *'
         run: python wait_until_morning.py
       - name: 抓取、生成页面并发送飞书
         run: python cloud_run.py
