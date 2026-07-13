@@ -1,0 +1,88 @@
+name: 竞赛研究雷达
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 运行方式
+        required: true
+        default: test
+        type: choice
+        options:
+          - test
+          - daily
+  schedule:
+    - cron: '55 8 * * *'
+      timezone: 'Asia/Shanghai'
+    - cron: '10 9 * * *'
+      timezone: 'Asia/Shanghai'
+    - cron: '30 9 * * *'
+      timezone: 'Asia/Shanghai'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: competition-research-radar
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+      PYTHONUTF8: '1'
+      LARK_APP_ID: ${{ secrets.LARK_APP_ID }}
+      LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+      LARK_CHAT_ID: ${{ secrets.LARK_CHAT_ID }}
+      RADAR_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'daily' }}
+      RADAR_FORCE_TEST: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'test' && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: 等待北京时间09:00
+        if: github.event_name == 'schedule' && github.event.schedule == '55 8 * * *'
+        run: python wait_until_morning.py
+      - name: 抓取、生成页面并发送飞书
+        run: python cloud_run.py
+      - name: 健康检查
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          page = Path('output/index.html')
+          assert page.exists() and page.stat().st_size > 50000, '雷达页面未正确生成'
+          db = sqlite3.connect('data/radar.sqlite3')
+          assert db.execute('select count(*) from entries').fetchone()[0] >= 100, '题录数量异常'
+          assert db.execute("select count(*) from runs where failures='[]'").fetchone()[0] >= 1, '没有完整成功的抓取记录'
+          PY
+      - name: 保存雷达状态
+        run: |
+          git config user.name 'competition-radar-bot'
+          git config user.email 'competition-radar-bot@users.noreply.github.com'
+          git add data/radar.sqlite3 output/index.html reports/ 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "更新竞赛研究雷达 $(date '+%Y-%m-%d %H:%M')"
+            git push
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: output
+
+  deploy:
+    needs: update
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 发布网页
+        id: deployment
+        uses: actions/deploy-pages@v4
