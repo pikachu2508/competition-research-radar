@@ -1,0 +1,15 @@
+[
+  {"id":"cnki-wlsl","name":"物理实验","group":"知网核心期刊","url":"https://rss.cnki.net/knavi/rss/WLSL?pcode=CJFD,CCJD","weight":3,"kind":"期刊论文"},
+  {"id":"cnki-dwsl","name":"大学物理实验","group":"知网核心期刊","url":"https://rss.cnki.net/knavi/rss/DWSL?pcode=CJFD,CCJD","weight":3,"kind":"期刊论文"},
+  {"id":"cnki-dxwl","name":"大学物理","group":"知网核心期刊","url":"https://rss.cnki.net/knavi/rss/DXWL?pcode=CJFD,CCJD","weight":3,"kind":"期刊论文"},
+  {"id":"cnki-jljs","name":"计量科学与技术","group":"知网扩展期刊","url":"https://rss.cnki.net/knavi/rss/JLJS?pcode=CJFD,CCJD","weight":2,"kind":"期刊论文"},
+  {"id":"cnki-jlxb","name":"计量学报","group":"知网扩展期刊","url":"https://rss.cnki.net/knavi/rss/JLXB?pcode=CJFD,CCJD","weight":2,"kind":"期刊论文"},
+  {"id":"cnki-cgjs","name":"传感技术学报","group":"知网扩展期刊","url":"https://rss.cnki.net/knavi/rss/CGJS?pcode=CJFD,CCJD","weight":2,"kind":"期刊论文"},
+  {"id":"cnki-cgqj","name":"传感器与微系统","group":"知网扩展期刊","url":"https://rss.cnki.net/knavi/rss/CGQJ?pcode=CJFD,CCJD","weight":2,"kind":"期刊论文"},
+  {"id":"iop-ped","name":"Physics Education","group":"国际期刊","url":"https://iopscience.iop.org/journal/rss/0031-9120","weight":2,"kind":"期刊论文"},
+  {"id":"iop-ejp","name":"European Journal of Physics","group":"国际期刊","url":"https://iopscience.iop.org/journal/rss/0143-0807","weight":2,"kind":"期刊论文"},
+  {"id":"iop-mst","name":"Measurement Science and Technology","group":"国际期刊","url":"https://iopscience.iop.org/journal/rss/0957-0233","weight":2,"kind":"期刊论文"},
+  {"id":"iop-metrologia","name":"Metrologia","group":"国际期刊","url":"https://iopscience.iop.org/journal/rss/0026-1394","weight":2,"kind":"期刊论文"},
+  {"id":"nist-metrology","name":"NIST Metrology","group":"权威动态","url":"https://www.nist.gov/news-events/metrology/rss.xml","weight":0,"kind":"官方动态"},
+  {"id":"nist-physics","name":"NIST Physics","group":"权威动态","url":"https://www.nist.gov/news-events/physics/rss.xml","weight":0,"kind":"官方动态"}
+]

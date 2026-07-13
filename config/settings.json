@@ -1,0 +1,7 @@
+{
+  "chat_id": "oc_b3c73f5c7413e2dd3cb88efd217a7438",
+  "notify_level": "strong",
+  "max_notifications_per_run": 5,
+  "request_timeout_seconds": 25,
+  "dashboard_days": 120
+}

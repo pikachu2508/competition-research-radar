@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>竞赛研究雷达</title>
+  <style>
+    :root{--ink:#172033;--muted:#667085;--line:#dce4ef;--bg:#f4f7fb;--card:#fff;--blue:#1e40af;--green:#08775f;--amber:#a15c00;--soft-blue:#eaf1ff;--soft-green:#e8f7f1;--soft-amber:#fff4df;--radius:16px}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei UI","PingFang SC",Inter,system-ui,sans-serif;line-height:1.65}
+    a{color:inherit}.wrap{max-width:1180px;margin:auto;padding:26px 20px 72px}.masthead{background:linear-gradient(130deg,#10285f,#1e40af 65%,#08775f);color:#fff;border-radius:24px;padding:30px;box-shadow:0 16px 44px rgba(20,50,100,.18)}
+    .eyebrow{font-size:13px;letter-spacing:.12em;opacity:.78}.masthead h1{font-size:clamp(30px,5vw,48px);line-height:1.1;margin:8px 0}.masthead p{margin:0;max-width:720px;opacity:.88}.run-state{margin-top:18px;font-size:13px;opacity:.82}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}.stat b{display:block;font-size:27px;line-height:1.2}.stat span{color:var(--muted);font-size:13px}
+    .toolbar{position:sticky;top:0;z-index:20;background:rgba(244,247,251,.96);padding:14px 0;display:flex;gap:10px;flex-wrap:wrap}.search{flex:1;min-width:240px}.toolbar input,.toolbar select{width:100%;min-height:44px;border:1px solid #c9d3e1;border-radius:12px;background:#fff;padding:0 13px;font:inherit;color:var(--ink)}
+    .toolbar select{width:auto;min-width:150px}.toolbar :focus-visible{outline:3px solid #93b4ff;outline-offset:1px}.section-title{display:flex;align-items:end;justify-content:space-between;margin:26px 0 12px}.section-title h2{margin:0;font-size:21px}.section-title span{color:var(--muted);font-size:13px}
+    .feed-list{display:grid;gap:12px}.paper{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 4px 16px rgba(29,48,78,.04);transition:transform .18s ease,box-shadow .18s ease}.paper:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(29,48,78,.09)}
+    .paper-head{display:flex;gap:14px;justify-content:space-between}.paper h3{font-size:18px;line-height:1.45;margin:0}.paper h3 a{text-decoration:none}.paper h3 a:hover{text-decoration:underline}.score{flex:0 0 auto;font-weight:700;font-size:13px;padding:4px 9px;border-radius:999px;height:max-content}.strong .score{background:var(--soft-green);color:var(--green)}.relevant .score{background:var(--soft-blue);color:var(--blue)}.general .score{background:#eef1f5;color:#586174}
+    .meta{display:flex;flex-wrap:wrap;gap:7px 12px;color:var(--muted);font-size:13px;margin:8px 0}.summary{margin:12px 0;color:#3f4b60;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.insight{border-left:3px solid var(--blue);padding:8px 12px;background:#f6f8ff;border-radius:0 9px 9px 0;font-size:14px}.tags{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}.tag{background:#eef3f9;color:#41516a;border-radius:999px;padding:3px 9px;font-size:12px}
+    .empty{display:none;text-align:center;background:#fff;border:1px dashed #b9c5d5;border-radius:16px;padding:40px;color:var(--muted)}.alerts{margin-top:18px;background:var(--soft-amber);color:#6c4300;border-radius:12px;padding:12px 16px}.footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+    @media(max-width:760px){.wrap{padding:12px 12px 52px}.masthead{padding:23px;border-radius:18px}.stats{grid-template-columns:repeat(2,1fr)}.toolbar{top:0}.toolbar select{flex:1;min-width:0}.paper{padding:16px}.paper-head{display:block}.score{display:inline-block;margin-top:9px}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body><main class="wrap">
+  <header class="masthead"><div class="eyebrow">PHYSICS EXPERIMENT INTELLIGENCE</div><h1>竞赛研究雷达</h1><p>围绕非平衡电桥测铜电阻温度系数，持续发现值得进入实验、讲课、论文与答辩的新信号。</p><div class="run-state">更新时间 {{ updated }} · 已连接 {{ feeds|length }} 个信源{% if last_run %} · 本轮新增 {{ last_run.added }} 条{% endif %}</div></header>
+  <section class="stats" aria-label="内容统计"><div class="stat"><b>{{ stats.strong }}</b><span>强相关</span></div><div class="stat"><b>{{ stats.relevant }}</b><span>值得关注</span></div><div class="stat"><b>{{ stats.total }}</b><span>全部收录</span></div><div class="stat"><b>{{ stats.sources }}</b><span>已有内容的信源</span></div></section>
+  {% if failures %}<div class="alerts"><strong>部分信源本轮未更新：</strong>{{ failures|join('；') }}</div>{% endif %}
+  <section class="toolbar" aria-label="筛选工具"><div class="search"><label for="search" hidden>搜索</label><input id="search" type="search" placeholder="搜索标题、摘要、作者或关键词"></div><select id="level" aria-label="相关程度"><option value="all">全部程度</option><option value="strong">强相关</option><option value="relevant">值得关注</option><option value="general">一般更新</option></select><select id="source" aria-label="来源"><option value="all">全部来源</option>{% for name in entries|map(attribute='source')|unique|sort %}<option>{{ name }}</option>{% endfor %}</select></section>
+  <div class="section-title"><h2>最新信号</h2><span id="count">{{ entries|length }} 条</span></div>
+  <section class="feed-list" id="feed-list">
+  {% for item in entries %}<article class="paper {{ item.level }}" data-level="{{ item.level }}" data-source="{{ item.source }}" data-search="{{ (item.title ~ ' ' ~ item.summary ~ ' ' ~ item.author ~ ' ' ~ item.author_affiliations ~ ' ' ~ item.doi ~ ' ' ~ item.detail_keywords ~ ' ' ~ item.funding ~ ' ' ~ item.matches ~ ' ' ~ item.categories)|lower }}">
+    <div class="paper-head"><h3><a href="{{ item.link }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></h3><span class="score">相关度 {{ item.score }}</span></div>
+    <div class="meta"><span>{{ item.source }}</span><span>{{ item.kind }}</span>{% if item.published %}<span>期刊日期 {{ item.published }}</span>{% endif %}{% if item.cnki_online_date %}<span>知网首次公开 {{ item.cnki_online_date }}</span>{% endif %}</div>
+    {% if item.author %}<div class="meta"><span>作者：{{ item.author }}</span>{% if item.author_affiliations %}<span>单位：{{ item.author_affiliations }}</span>{% endif %}{% if item.doi %}<span>DOI：<a href="https://doi.org/{{ item.doi }}" target="_blank" rel="noopener noreferrer">{{ item.doi }}</a></span>{% endif %}</div>{% endif %}
+    {% if item.summary %}<p class="summary">{{ item.summary }}</p>{% endif %}<div class="insight"><strong>与竞赛的关系：</strong>{{ item.relation }}</div><div class="tags"><span class="tag">{{ item.categories }}</span>{% if item.detail_keywords %}<span class="tag">关键词：{{ item.detail_keywords }}</span>{% endif %}{% if item.matches %}<span class="tag">命中：{{ item.matches }}</span>{% endif %}</div>{% if item.funding %}<p class="meta">基金资助：{{ item.funding }}</p>{% endif %}
+  </article>{% endfor %}</section><div class="empty" id="empty">没有符合当前条件的内容。</div>
+  <footer class="footer">RSS 负责发现更新，最终是否进入竞赛材料仍由人工确认。页面每日由云端自动更新。</footer>
+</main><script>
+const q=document.querySelector('#search'),level=document.querySelector('#level'),source=document.querySelector('#source'),cards=[...document.querySelectorAll('.paper')],count=document.querySelector('#count'),empty=document.querySelector('#empty');
+function filter(){const text=q.value.trim().toLowerCase();let shown=0;cards.forEach(card=>{const ok=(!text||card.dataset.search.includes(text))&&(level.value==='all'||card.dataset.level===level.value)&&(source.value==='all'||card.dataset.source===source.value);card.hidden=!ok;if(ok)shown++});count.textContent=shown+' 条';empty.style.display=shown?'none':'block'}
+[q,level,source].forEach(el=>el.addEventListener('input',filter));
+</script></body></html>

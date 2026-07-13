@@ -1,0 +1,18 @@
+{
+  "categories": [
+    {"name":"电桥与电阻测量","use":"实验原理、线路优化与答辩依据","strong":["非平衡电桥","惠斯通电桥","wheatstone bridge","电阻温度系数","resistance temperature coefficient","铜电阻"],"medium":["电桥","热电阻","铂电阻","电阻测量","四线制","恒流源","信号调理"]},
+    {"name":"温度传感器与热电阻","use":"真实应用、传感方法与装置改进","strong":["温度传感器","temperature sensor","resistance thermometer","电阻温度计","热敏电阻"],"medium":["测温","温度测量","temperature measurement","温度标定","温度校准","传感器"]},
+    {"name":"大学物理实验改进","use":"实验装置、教学流程与竞赛创新","strong":["大学物理实验","物理实验改进","实验装置改进","undergraduate physics laboratory"],"medium":["实验教学","教学实验","实验系统","实验平台","实验设计","laboratory experiment"]},
+    {"name":"测量误差与不确定度","use":"数据可信度、误差分析与答辩","strong":["测量不确定度","measurement uncertainty","不确定度评定","误差溯源"],"medium":["不确定度","误差分析","校准","标定","计量溯源","uncertainty","calibration","metrology"]},
+    {"name":"实验教学与竞赛创新","use":"讲课设计、问题链与创新表达","strong":["实验教学创新","项目式学习","创新实验","physics education research"],"medium":["教学创新","课程改革","虚实结合","数字化实验","竞赛","教学实践"]}
+  ],
+  "exclude": ["医学影像分割","深度学习目标检测","金融","股票","临床护理"],
+  "logic_groups": {
+    "direct": ["非平衡电桥","惠斯通电桥","wheatstone bridge","铜电阻","铜线","电阻温度系数","resistance temperature coefficient","resistance thermometer","热电阻","rtd","tcr","pt100","pt1000"],
+    "measurement": ["四线制","kelvin","恒流源","电阻测量","差分放大","仪表放大","信号调理","数据采集","bridge circuit"],
+    "temperature": ["测温","温度传感","温度测量","自热","温漂","线性化","temperature sensor","temperature measurement"],
+    "quality": ["校准","标定","不确定度","误差补偿","漂移","噪声","重复性","calibration","uncertainty","metrology"],
+    "teaching": ["大学物理实验","实验改进","实验教学","教学实验","physics education","laboratory experiment"]
+  },
+  "levels": {"strong": 9, "relevant": 5}
+}
