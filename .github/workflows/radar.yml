@@ -70,7 +70,7 @@ jobs:
       - run: pip install -r requirements.txt
         if: steps.window.outputs.should_run == 'true'
       - name: 等待北京时间09:00
-        if: steps.window.outputs.should_run == 'true' && github.event_name == 'schedule'
+        if: steps.window.outputs.should_run == 'true' && (github.event_name == 'schedule' || inputs.mode == 'daily')
         run: python wait_until_morning.py
       - name: 抓取、生成页面并发送飞书
         if: steps.window.outputs.should_run == 'true'
@@ -115,4 +115,5 @@ jobs:
       - name: 发布网页
         id: deployment
         uses: actions/deploy-pages@v4
+
 
