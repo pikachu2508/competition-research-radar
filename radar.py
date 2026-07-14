@@ -154,7 +154,9 @@ def classify(item: dict, keyword_config: dict) -> dict:
     elif teaching_technical:
         score = max(score, 7)
     else:
-        score = min(score, 7)
+        # 只有泛化的“误差/校准/不确定度”等词，不足以进入每日推送。
+        # 必须直接命中课题，或同时具备测量方法与温度/质量控制联系。
+        score = min(score, 4)
     for values in hit.values():
         matches.extend(values)
     thresholds = keyword_config["levels"]
@@ -226,6 +228,27 @@ def save_entries(db: sqlite3.Connection, items: list[dict], baselined: set[str])
         added.append({**item, "fingerprint": fp, "first_seen": now})
     db.commit()
     return added
+
+
+def reclassify_existing(db: sqlite3.Connection, keyword_config: dict, feeds: list[dict]) -> int:
+    """按当前规则重评历史题录，避免旧规则留下的误选继续进入摘要。"""
+    weights = {feed["id"]: int(feed.get("weight", 0)) for feed in feeds}
+    rows = db.execute("SELECT fingerprint,feed_id,title,summary FROM entries").fetchall()
+    changed = 0
+    for row in rows:
+        result = classify({
+            "title": row["title"],
+            "summary": row["summary"],
+            "source_weight": weights.get(row["feed_id"], 0),
+        }, keyword_config)
+        cursor = db.execute("""UPDATE entries SET score=?,level=?,categories=?,matches=?,relation=?
+                               WHERE fingerprint=? AND (score<>? OR level<>? OR categories<>? OR matches<>? OR relation<>?)""",
+                            (result["score"], result["level"], result["categories"], result["matches"], result["relation"],
+                             row["fingerprint"], result["score"], result["level"], result["categories"],
+                             result["matches"], result["relation"]))
+        changed += cursor.rowcount
+    db.commit()
+    return changed
 
 
 def apply_metadata_cache(db: sqlite3.Connection) -> int:
@@ -321,6 +344,7 @@ def run(open_page: bool, notify: bool) -> int:
         except Exception as exc:
             failures.append(f"{feed['name']}：{exc}")
     added = save_entries(db, all_items, baselined)
+    reclassify_existing(db, keywords, feeds)
     apply_metadata_cache(db)
     strong_new = sorted((i for i in added if i["level"] == "strong" and f'feed:{i["feed_id"]}' in baselined), key=lambda x: x["score"], reverse=True)
     notification = "本轮不发送即时提醒"
